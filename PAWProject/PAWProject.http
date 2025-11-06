@@ -1,0 +1,6 @@
+@PAWProject_HostAddress = http://localhost:5043
+
+GET {{PAWProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
