@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Consumer\" />
+    <PackageReference Include="SimpleFeedReader" Version="2.0.4" />
   </ItemGroup>
 
 </Project>
