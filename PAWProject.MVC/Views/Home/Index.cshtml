@@ -1,0 +1,21 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <p>Recent News</p>
+
+    <div class="row">
+        @foreach (var item in Model.FeedItems)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-title">@item.Title</p>
+                    </div>
+                </div>
+            </div>
+        }
+       </div>
+</div>
