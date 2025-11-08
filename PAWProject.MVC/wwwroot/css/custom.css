@@ -1,0 +1,80 @@
+﻿:root {
+    --primary-red: #D32F2F;
+    --secondary-red: #B71C1C;
+    --bg-white: #F9F9F9;
+    --main-text: #111111;
+    --primary-gray: #E0E0E0;
+    --secondary-gray: #757575;
+    --primary-yellow: #FFB300;
+    --primary-coral: #FF6F61
+}
+
+.bg-primary-red {
+    background-color: var(--primary-red) !important;
+}
+
+.bg-custom-white {
+    background-color: var(--bg-white) !important;
+}
+
+.bg-gradient-black {
+    background-image: linear-gradient(to top, black, transparent);
+}
+
+.text-xs {
+    font-size: 0.5rem;
+}
+
+.text-sm {
+    font-size: 0.75rem;
+}
+
+.text-md {
+    font-size: 1rem;
+}
+
+.text-lg {
+    font-size: 1.25rem;
+}
+
+.text-xl {
+    font-size: 1.5rem;
+}
+
+.text-gray {
+    color: var(--secondary-gray);
+}
+
+.text-main {
+    color: var(--secondary-red);
+}
+
+.text-yellow {
+    color: var(--primary-yellow);
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.card-height {
+    height: 330px;
+}
+
+.image-height {
+    height:200px
+}
+
+.link {
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.link:hover {
+    color: var(--primary-coral)
+}
+
