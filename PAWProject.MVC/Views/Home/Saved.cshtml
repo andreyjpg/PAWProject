@@ -1,0 +1,66 @@
+@model List<(PAWProject.MVC.Models.Source Source, PAWProject.DTOs.FeedItemDTO Item, System.DateTime CreatedAt)>
+
+@{
+    ViewData["Title"] = "Items guardados";
+    var sources = ViewBag.Sources as IEnumerable<PAWProject.MVC.Models.Source>;
+}
+
+<div class="container mt-4">
+    <h3>Items guardados</h3>
+
+    <div class="mb-3">
+        <form asp-action="Saved" method="get" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label">Filtrar por fuente</label>
+                <select name="sourceId" class="form-select">
+                    <option value="">Todas</option>
+                    @if (sources != null)
+                    {
+                        foreach (var s in sources)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+        </form>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Todavía no hay items guardados. Vaya al Home, seleccione una fuente y use el botón <strong>Guardar item</strong>.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var tuple in Model)
+            {
+                var source = tuple.Source;
+                var item = tuple.Item;
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>@source.Name</strong>
+                            <span class="badge bg-secondary float-end">
+                                Guardado: @tuple.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Title</h5>
+                            <p class="card-text">@item.Description</p>
+                            @if (!string.IsNullOrEmpty(item.Uri))
+                            {
+                                <a href="@item.Uri" class="btn btn-sm btn-outline-primary" target="_blank">Ver noticia</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
