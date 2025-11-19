@@ -1,0 +1,56 @@
+@model IEnumerable<PAWProject.MVC.Models.Source>
+
+@{
+    ViewData["Title"] = "Fuentes configuradas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Fuentes configuradas</h3>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Agregar fuente
+        </a>
+    </div>
+
+    @if (TempData["Message"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay fuentes configuradas todavía. Haz clic en <strong>Agregar fuente</strong>.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>URL</th>
+                    <th>Tipo</th>
+                    <th>Requiere secreto</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.Id</td>
+                        <td>@s.Name</td>
+                        <td>
+                            <a href="@s.Url" target="_blank">@s.Url</a>
+                        </td>
+                        <td>@s.ComponentType</td>
+                        <td>@(s.RequiresSecret ? "Sí" : "No")</td>
+                        <td>@s.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

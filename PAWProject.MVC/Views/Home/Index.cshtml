@@ -1,4 +1,6 @@
-﻿@model HomeViewModel
+﻿@model PAWProject.MVC.Models.HomeViewModel
+@using PAWProject.DTOs
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -6,28 +8,84 @@
 <div class="text-center ">
     <h3 class="mb-4">Recent News</h3>
 
+    <div class="mb-4">
+        <form asp-action="Index" method="get" class="row g-2 justify-content-center">
+            <div class="col-auto">
+                <select name="sourceId" class="form-select">
+                    @foreach (var s in Model.Sources ?? Enumerable.Empty<PAWProject.MVC.Models.Source>())
+                    {
+                        <option value="@s.Id" selected="@(Model.SelectedSourceId == s.Id)">
+                            @s.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">
+                    Cargar fuente
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @if (TempData["Message"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
     <div class="row">
-        @foreach (var item in Model.FeedItems)
+        @if (Model.FeedItems != null)
         {
-            <div class="col-md-3">
-                <div class="card mb-4 shadow-sm card-height">
-                    <div class="position-relative ">
-                        <img src="@item.Image" alt="Alternate Text" height="170" />
-                        <div class="position-absolute bottom-0 bg-gradient-black w-full p-2">
-                            <p class="text-sm text-end text-white mb-0" id="publish-date-@item.Id" data-date="@item.PublishDate"></p>
+            foreach (var item in Model.FeedItems)
+            {
+                <div class="col-md-3">
+                    <div class="card mb-4 shadow-sm card-height">
+                        <div class="position-relative">
+                            @if (!string.IsNullOrEmpty(item.Image))
+                            {
+                                <img src="@item.Image" alt="Image" height="170" />
+                            }
+                            <div class="position-absolute bottom-0 bg-gradient-black w-full p-2">
+                                <span class="badge bg-yellow text-dark">
+                                    @item.PublishDate?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <i class="bi bi-bookmark text-yellow"></i>
+                            <a href="@item.Uri" target="_blank" class="card-title text-main text-md fw-bold link">
+                                @item.Title
+                            </a>
+                            <p class="card-subtitle text-sm mt-2">@item.Description</p>
+
+                            <form asp-action="SaveItem" method="post" class="mt-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="sourceId" value="@Model.SelectedSourceId" />
+                                <input type="hidden" name="item.Id" value="@item.Id" />
+                                <input type="hidden" name="item.Title" value="@item.Title" />
+                                <input type="hidden" name="item.Description" value="@item.Description" />
+                                <input type="hidden" name="item.Uri" value="@item.Uri" />
+                                <input type="hidden" name="item.Image" value="@item.Image" />
+                                <input type="hidden" name="item.PublishDate" value="@item.PublishDate" />
+                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                    Guardar item
+                                </button>
+                            </form>
                         </div>
                     </div>
-                    
-
-                    <div class="card-body">
-                        <i class="bi bi-bookmark text-yellow"></i>
-                        <a href="@item.Uri" target="_blank" class="card-title text-main text-md fw-bold link ">@item.Title</a>
-                        <p class="card-subtitle text-sm mt-2">@item.Description</p>
-                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No se encontraron items para la fuente seleccionada.
                 </div>
             </div>
         }
-       </div>
+    </div>
 </div>
 
 <script src="~/js/home.js" type="text/javascript"></script>
