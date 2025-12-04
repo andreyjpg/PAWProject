@@ -3,10 +3,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient("RssConsumer", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7096/");
-});
+// Cliente HTTP genérico para consumir URLs de las fuentes.
+builder.Services.AddHttpClient();
+
+// Registro de servicios de dominio de la aplicación.
+builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceStore, PAWProject.MVC.Services.InMemorySourceStore>();
+builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceItemStore, PAWProject.MVC.Services.InMemorySourceItemStore>();
+builder.Services.AddScoped<PAWProject.MVC.Services.INewsIngestionService, PAWProject.MVC.Services.NewsIngestionService>();
 
 
 builder.Services.AddCors(options =>
@@ -18,15 +21,12 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -34,6 +34,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+ 
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

@@ -1,4 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using PAWProject.Data.MSSQL;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<NewsHubContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NewsHubConnection"));
+});
 
 // Add services to the container.
 
