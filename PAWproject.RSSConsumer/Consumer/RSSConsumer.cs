@@ -9,13 +9,9 @@ public class RSSConsumer
     {
         _feedUrl = feedUrl;
     }
-    public async Task<IEnumerable<FeedItem>> GetFeedItemsAsync(string? category, string? location)
+    public async Task<IEnumerable<FeedItem>> GetFeedXMLItems()
     {
-
-        var categoryUrl = category != null ? $"/{category}" : "";
-        var locationUrl = location != null ? $"/{location}" : "";
-
-        var reader = XmlReader.Create($"{_feedUrl}{categoryUrl}{locationUrl}/rss.xml");
+        var reader = XmlReader.Create($"{_feedUrl}/rss.xml");
         var feed = SyndicationFeed.Load(reader);
 
         return feed.Items.Select(item => new FeedItem
@@ -33,4 +29,8 @@ public class RSSConsumer
         });
 
     }
+
+    public async Task<IEnumerable<FeedItem>> GetFeedJsonItems()
+
+
 }
