@@ -1,16 +1,31 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using PAWProject.Data.MSSQL;
+using PAWProject.Models.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<NewsHubContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
-// Cliente HTTP genérico para consumir URLs de las fuentes.
 builder.Services.AddHttpClient();
 
-// Registro de servicios de dominio de la aplicación.
 builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceStore, PAWProject.MVC.Services.InMemorySourceStore>();
 builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceItemStore, PAWProject.MVC.Services.InMemorySourceItemStore>();
 builder.Services.AddScoped<PAWProject.MVC.Services.INewsIngestionService, PAWProject.MVC.Services.NewsIngestionService>();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
@@ -23,7 +38,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -36,7 +50,7 @@ app.UseStaticFiles();
 app.UseRouting();
  
 app.UseCors("AllowAll");
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

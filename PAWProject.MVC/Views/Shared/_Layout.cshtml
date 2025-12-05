@@ -34,6 +34,27 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            var role = User.FindFirstValue(ClaimTypes.Role);
+                            <li class="nav-item">
+                                <span class="nav-link text-white">Hola, @User.Identity?.Name (@role)</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link text-white text-decoration-none px-0">Salir</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Ingresar</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

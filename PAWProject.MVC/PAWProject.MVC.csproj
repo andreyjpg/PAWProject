@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PAWProject.DTOs\PAWProject.DTOs.csproj" />
+    <ProjectReference Include="..\PAWProject.Data\PAWProject.Data.csproj" />
   </ItemGroup>
 
 </Project>

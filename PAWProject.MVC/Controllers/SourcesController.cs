@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PAWProject.MVC.Models;
 using PAWProject.MVC.Services;
@@ -5,6 +6,7 @@ using PAWProject.MVC.Services;
 namespace PAWProject.MVC.Controllers
 {
    
+    [Authorize(Roles = "Admin")]
     public class SourcesController : Controller
     {
         private readonly ISourceStore _sourceStore;
