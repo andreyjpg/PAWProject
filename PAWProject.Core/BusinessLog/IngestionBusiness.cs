@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PAWProject.Core.NewFolder
+namespace PAWProject.Core.Business
 {
     public interface IIngestionBusiness
     {

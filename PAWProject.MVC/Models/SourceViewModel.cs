@@ -5,12 +5,11 @@ using System.Collections.Generic;
 namespace PAWProject.MVC.Models
 {
    
-    public class HomeViewModel
+    public class SourceViewModel
     {
-        public IEnumerable<FeedItemDTO>? FeedItems { get; set; }
-
-        public int? SelectedSourceId { get; set; }
 
         public IEnumerable<SourceDTO>? Sources { get; set; }
+
+        public SourceDTO? NewSource { get; set; } = new SourceDTO();
     }
 }

@@ -1,8 +1,8 @@
-@model List<(PAWProject.MVC.Models.Source Source, PAWProject.DTOs.FeedItemDTO Item, System.DateTime CreatedAt)>
+@model SourceItemViewModel
 
 @{
     ViewData["Title"] = "Items guardados";
-    var sources = ViewBag.Sources as IEnumerable<PAWProject.MVC.Models.Source>;
+    var sources = ViewBag.Sources;
 }
 
 <div class="container mt-4">
@@ -29,7 +29,7 @@
         </form>
     </div>
 
-    @if (Model == null || !Model.Any())
+    @if (Model == null || !Model.SourceItems.Any())
     {
         <div class="alert alert-info">
             Todavía no hay items guardados. Vaya al Home, seleccione una fuente y use el botón <strong>Guardar item</strong>.
@@ -38,16 +38,16 @@
     else
     {
         <div class="row">
-            @foreach (var tuple in Model)
+            @foreach (var ele in Model.SourceItems)
             {
-                var source = tuple.Source;
-                var item = tuple.Item;
+                var source = ele.Source;
+                var item = ele.Item;
                 <div class="col-md-4">
                     <div class="card mb-3">
                         <div class="card-header">
                             <strong>@source.Name</strong>
                             <span class="badge bg-secondary float-end">
-                                Guardado: @tuple.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                Guardado: @ele.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                             </span>
                         </div>
                         <div class="card-body">
