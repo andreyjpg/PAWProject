@@ -11,6 +11,11 @@ builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceStore, PAWProject.M
 builder.Services.AddSingleton<PAWProject.MVC.Services.ISourceItemStore, PAWProject.MVC.Services.InMemorySourceItemStore>();
 builder.Services.AddScoped<PAWProject.MVC.Services.INewsIngestionService, PAWProject.MVC.Services.NewsIngestionService>();
 
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7200/");
+});
+
 
 builder.Services.AddCors(options =>
 {

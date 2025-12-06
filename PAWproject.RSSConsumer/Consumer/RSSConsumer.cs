@@ -30,7 +30,7 @@ public class RSSConsumer
 
     }
 
-    public async Task<IEnumerable<FeedItem>> GetFeedJsonItems()
+    //public async Task<IEnumerable<FeedItem>> GetFeedJsonItems()
 
 
 }

@@ -1,3 +1,6 @@
+using PAWProject.DTOs;
+using PAWProject.DTOs.DTOs;
+using PAWProject.MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,10 +8,11 @@ using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-using PAWProject.DTOs;
-using PAWProject.MVC.Models;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PAWProject.MVC.Services
 {
@@ -22,7 +26,7 @@ namespace PAWProject.MVC.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<List<FeedItemDTO>> GetItemsFromSourceAsync(Source source)
+        public async Task<List<FeedItemDTO>> GetItemsFromSourceAsync(SourceDTO source)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
@@ -52,25 +56,67 @@ namespace PAWProject.MVC.Services
 
         private List<FeedItemDTO> ParseRssOrAtom(string xmlContent)
         {
-            using var stringReader = new System.IO.StringReader(xmlContent);
+            using var stringReader = new StringReader(xmlContent);
             using var xmlReader = XmlReader.Create(stringReader);
             var feed = SyndicationFeed.Load(xmlReader);
 
             if (feed == null)
-            {
                 return new List<FeedItemDTO>();
-            }
 
-            return feed.Items.Select(item => new FeedItemDTO
+            return feed.Items.Select(item =>
             {
-                Id = item.Id,
-                Title = item.Title?.Text,
-                Description = item.Summary?.Text,
-                PublishDate = item.PublishDate.UtcDateTime,
-                Uri = item.Links.FirstOrDefault()?.Uri.ToString(),
-                Image = null 
+                string? imageUrl = null;
+
+                // 1. Intentar obtener imagen desde media:thumbnail o media:content
+                try
+                {
+                    foreach (var ext in item.ElementExtensions)
+                    {
+                        var ele = ext.GetObject<XElement>();
+
+                        if (ele.Name.LocalName is "thumbnail" or "content")
+                        {
+                            var url = ele.Attribute("url")?.Value;
+                            if (!string.IsNullOrWhiteSpace(url))
+                            {
+                                imageUrl = url;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch { /* si falla alguna extensión, ignoramos */ }
+
+                // 2. Si no encontró nada en media, intentar extraer del summary (HTML <img>)
+                if (imageUrl == null && item.Summary != null)
+                {
+                    var match = Regex.Match(item.Summary.Text, "src=[\"'](?<url>.+?)[\"']",
+                        RegexOptions.IgnoreCase);
+
+                    if (match.Success)
+                        imageUrl = match.Groups["url"].Value;
+                }
+
+                // 3. Último fallback: algunos feeds ponen imagen en "Links" con rel="enclosure"
+                imageUrl ??= item.Links
+                    .FirstOrDefault(l => l.RelationshipType == "enclosure" &&
+                                         l.MediaType?.StartsWith("image") == true)
+                    ?.Uri.ToString();
+
+                return new FeedItemDTO
+                {
+                    Id = item.Id,
+                    Title = StripHtml(item.Title?.Text),
+                    Description = StripHtml(item.Summary?.Text),
+                    PublishDate = item.PublishDate.UtcDateTime,
+                    Uri = item.Links.FirstOrDefault()?.Uri.ToString(),
+                    Image = imageUrl ?? "/Image/default-news.png"
+                };
             }).ToList();
         }
+
+
+
 
         private List<FeedItemDTO> ParseJson(string json)
         {
@@ -117,7 +163,7 @@ namespace PAWProject.MVC.Services
             return result;
         }
 
-        private List<FeedItemDTO> ParseHtmlAsSingleItem(Source source, string html)
+        private List<FeedItemDTO> ParseHtmlAsSingleItem(SourceDTO source, string html)
         {
             string title = ExtractBetween(html, "<title", "</title>") ?? source.Name;
             var closing = title.IndexOf('>');

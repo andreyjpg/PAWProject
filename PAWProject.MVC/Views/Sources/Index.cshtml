@@ -1,4 +1,4 @@
-@model IEnumerable<PAWProject.MVC.Models.Source>
+@model SourceViewModel
 
 @{
     ViewData["Title"] = "Fuentes configuradas";
@@ -17,7 +17,7 @@
         <div class="alert alert-success">@msg</div>
     }
 
-    @if (!Model.Any())
+    @if (!Model.Sources.Any())
     {
         <div class="alert alert-info">
             No hay fuentes configuradas todavía. Haz clic en <strong>Agregar fuente</strong>.
@@ -37,7 +37,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var s in Model)
+                @foreach (var s in Model.Sources)
                 {
                     <tr>
                         <td>@s.Id</td>

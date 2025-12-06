@@ -1,4 +1,4 @@
-@model PAWProject.MVC.Models.Source
+@model SourceViewModel
 
 @{
     ViewData["Title"] = "Nueva fuente";
@@ -10,40 +10,40 @@
         Aquí el administrador puede registrar nuevas fuentes (RSS, APIs, HTML) que luego el sistema podrá consumir.
     </p>
 
-    <form asp-action="Create" method="post">
+    <form asp-action="CreateSource" method="post">
         @Html.AntiForgeryToken()
 
         <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <label asp-for="NewSource.Name" class="form-label"></label>
+            <input asp-for="NewSource.Name" class="form-control" />
+            <span asp-validation-for="NewSource.Name" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Url" class="form-label"></label>
-            <input asp-for="Url" class="form-control" placeholder="https://feeds.bbci.co.uk/news/rss.xml" />
-            <span asp-validation-for="Url" class="text-danger"></span>
+            <label asp-for="NewSource.Url" class="form-label"></label>
+            <input asp-for="NewSource.Url" class="form-control" placeholder="https://feeds.bbci.co.uk/news/rss.xml" />
+            <span asp-validation-for="NewSource.Url" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="ComponentType" class="form-label"></label>
-            <select asp-for="ComponentType" class="form-select">
+            <label asp-for="NewSource.ComponentType" class="form-label"></label>
+            <select asp-for="NewSource.ComponentType" class="form-select">
                 <option value="feed">feed (RSS / Atom / XML)</option>
                 <option value="api">api (JSON)</option>
                 <option value="widget">widget / HTML</option>
             </select>
-            <span asp-validation-for="ComponentType" class="text-danger"></span>
+            <span asp-validation-for="NewSource.ComponentType" class="text-danger"></span>
         </div>
 
         <div class="form-check mb-3">
-            <input asp-for="RequiresSecret" class="form-check-input" />
-            <label asp-for="RequiresSecret" class="form-check-label"></label>
+            <input asp-for="NewSource.RequiresSecret" class="form-check-input" />
+            <label asp-for="NewSource.RequiresSecret" class="form-check-label"></label>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+            <label asp-for="NewSource.Description" class="form-label"></label>
+            <textarea asp-for="NewSource.Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="NewSource.Description" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-success">
