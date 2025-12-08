@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PAWProject.DTOs;
+using PAWProject.DTOs.DTOs;
+using PAWProject.Models.Entities;
 using PAWProject.MVC.Models;
 using PAWProject.MVC.Services;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PAWProject.MVC.Controllers
@@ -12,36 +15,35 @@ namespace PAWProject.MVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly INewsIngestionService _newsIngestionService;
-        private readonly ISourceStore _sourceStore;
-        private readonly ISourceItemStore _sourceItemStore;
+        private readonly HttpClient _httpClientAPI;
 
         public HomeController(
             ILogger<HomeController> logger,
             INewsIngestionService newsIngestionService,
-            ISourceStore sourceStore,
-            ISourceItemStore sourceItemStore)
+            IHttpClientFactory httpFactory)
         {
             _logger = logger;
             _newsIngestionService = newsIngestionService;
-            _sourceStore = sourceStore;
-            _sourceItemStore = sourceItemStore;
+            _httpClientAPI = httpFactory.CreateClient("API");
         }
 
         public async Task<IActionResult> Index(int? sourceId)
         {
             var model = new HomeViewModel();
 
-            var sources = _sourceStore.GetAll();
+            var sources = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source");
+
             model.Sources = sources;
 
-            if (sources.Count == 0)
+            if (sources.Count() == 0)
             {
                 model.FeedItems = Enumerable.Empty<FeedItemDTO>();
                 return View(model);
             }
 
+
             var selectedSource = sourceId.HasValue
-                ? _sourceStore.GetById(sourceId.Value)
+                ? sources.FirstOrDefault(s => s.Id == sourceId.Value)
                 : sources.FirstOrDefault();
 
             if (selectedSource == null)
@@ -60,59 +62,71 @@ namespace PAWProject.MVC.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SaveItem(int sourceId, FeedItemDTO item)
+        public async Task<IActionResult> SaveItem(int sourceId, FeedItemDTO item)
         {
-            var source = _sourceStore.GetById(sourceId);
-            if (source == null)
-            {
-                return NotFound();
-            }
 
             var json = JsonSerializer.Serialize(item);
 
-            _sourceItemStore.Add(new SourceItem
+            var sourceItem = new SourceItemDTO
             {
                 SourceId = sourceId,
                 Json = json,
                 CreatedAt = DateTime.UtcNow
-            });
+            };
 
-            TempData["Message"] = "El item se ha guardado correctamente (almacenado en memoria).";
+            var payload = JsonSerializer.Serialize(sourceItem);
+
+
+            var response = await _httpClientAPI.PostAsJsonAsync("api/SourceItem", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "El item se ha guardado correctamente.";
+            } else
+            {
+                TempData["Message"] = "Ha ocurrido un error al intentar guardar el item.";
+
+            }
 
             return RedirectToAction(nameof(Index), new { sourceId });
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Saved(int? sourceId)
+        public async Task<IActionResult> Saved(int? sourceId)
         {
-            var sources = _sourceStore.GetAll();
+            var SourceItemViewModel = new SourceItemViewModel();
+            var sources = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source");
+
             ViewBag.Sources = sources;
 
-            var items = sourceId.HasValue
-                ? _sourceItemStore.GetBySourceId(sourceId.Value)
-                : _sourceItemStore.GetAll();
+            var selectedSource = sourceId.HasValue
+                ? sources.FirstOrDefault(s => s.Id == sourceId.Value)
+                : sources.FirstOrDefault();
 
-            var viewModel = new List<(Source Source, FeedItemDTO Item, DateTime CreatedAt)>();
+            var response = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceItemDTO>>("api/SourceItem");
 
-            foreach (var stored in items)
+            if (response != null)
             {
-                try
+                foreach (var stored in response)
                 {
-                    var dto = JsonSerializer.Deserialize<FeedItemDTO>(stored.Json);
-                    var source = _sourceStore.GetById(stored.SourceId);
-                    if (dto != null && source != null)
+                    try
                     {
-                        viewModel.Add((source, dto, stored.CreatedAt));
+                        var dto = JsonSerializer.Deserialize<FeedItemDTO>(stored.Json);
+                        var source = sources.FirstOrDefault();
+                        if (dto != null && source != null)
+                        {
+                            SourceItemViewModel.SourceItems.Add((source, dto, stored.CreatedAt));
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al deserializar un item guardado.");
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error al deserializar un item guardado.");
+                    }
                 }
             }
 
-            return View(viewModel);
+            return View(SourceItemViewModel);
         }
 
         public IActionResult Privacy()

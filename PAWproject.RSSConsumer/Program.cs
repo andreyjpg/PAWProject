@@ -9,10 +9,10 @@ var app = builder.Build();
 
 app.MapGet("/bbcConsumer", async (RSSConsumer rssConsumer, string? category, string? location) =>
 {
-    var items = await rssConsumer.GetFeedItemsAsync(category, location);
-    Console.WriteLine(items); 
+    //var items = await rssConsumer.GetFeedItemsAsync(category, location);
+    //Console.WriteLine(items); 
    
-    return Results.Ok(items);
+    //return Results.Ok(items);
 });
 
 

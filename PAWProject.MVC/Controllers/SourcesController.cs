@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PAWProject.DTOs.DTOs;
 using PAWProject.MVC.Models;
 using PAWProject.MVC.Services;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace PAWProject.MVC.Controllers
 {
@@ -9,49 +13,57 @@ namespace PAWProject.MVC.Controllers
     [Authorize(Roles = "Admin")]
     public class SourcesController : Controller
     {
-        private readonly ISourceStore _sourceStore;
+        private readonly HttpClient _httpClient;
 
-        public SourcesController(ISourceStore sourceStore)
+        public SourcesController( IHttpClientFactory httpFactory)
         {
-            _sourceStore = sourceStore;
+            _httpClient = httpFactory.CreateClient("API");
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var sources = _sourceStore.GetAll();
-            return View(sources);
+            var vm = new SourceViewModel
+            {
+                Sources = await _httpClient.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source")
+            };
+
+            return View(vm);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            var model = new Source
+
+            var vm = new SourceViewModel
             {
-                ComponentType = "feed",
-                RequiresSecret = false
+                NewSource = new SourceDTO
+                {
+                    ComponentType = "feed",
+                    RequiresSecret = false
+                }
             };
-            return View(model);
+
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Source model)
+        public async Task<IActionResult> CreateSource(SourceViewModel model)
         {
-            if (!string.IsNullOrWhiteSpace(model.Url) &&
-                !Uri.TryCreate(model.Url, UriKind.Absolute, out _))
+
+            if (!string.IsNullOrWhiteSpace(model.NewSource.Url) &&
+                !Uri.TryCreate(model.NewSource.Url, UriKind.Absolute, out _))
             {
-                ModelState.AddModelError(nameof(model.Url), "Ingrese una URL válida (incluya https://).");
+                ModelState.AddModelError(nameof(model.NewSource.Url), "Ingrese una URL válida (incluya https://).");
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
 
-            _sourceStore.Add(model);
-            TempData["Message"] = "Fuente creada correctamente (almacenada en memoria). " +
-                                  "Cuando se conecte la base de datos, esta misma pantalla guardará en la tabla Sources.";
+            var json = JsonSerializer.Serialize(model.NewSource);
+
+            await _httpClient.PostAsJsonAsync("api/Source", json);
+
+            TempData["Message"] = "Fuente creada correctamente. ";
             return RedirectToAction(nameof(Index));
         }
     }

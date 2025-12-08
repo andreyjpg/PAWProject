@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PAWProject.Data\PAWProject.Data.csproj" />
+    <ProjectReference Include="..\PAWProject.Core\PAWProject.Core.csproj" />
   </ItemGroup>
 
 </Project>

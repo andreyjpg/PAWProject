@@ -12,7 +12,7 @@
         <form asp-action="Index" method="get" class="row g-2 justify-content-center">
             <div class="col-auto">
                 <select name="sourceId" class="form-select">
-                    @foreach (var s in Model.Sources ?? Enumerable.Empty<PAWProject.MVC.Models.Source>())
+                    @foreach (var s in Model.Sources)
                     {
                         <option value="@s.Id" selected="@(Model.SelectedSourceId == s.Id)">
                             @s.Name
@@ -39,20 +39,20 @@
             foreach (var item in Model.FeedItems)
             {
                 <div class="col-md-3">
-                    <div class="card mb-4 shadow-sm card-height">
+                    <div class="card shadow-sm card-height mt-5">
                         <div class="position-relative">
                             @if (!string.IsNullOrEmpty(item.Image))
                             {
                                 <img src="@item.Image" alt="Image" height="170" />
                             }
                             <div class="position-absolute bottom-0 bg-gradient-black w-full p-2">
-                                <span class="badge bg-yellow text-dark">
+                                <span class="badge bg-yellow text-white">
                                     @item.PublishDate?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                                 </span>
                             </div>
                         </div>
 
-                        <div class="card-body">
+                        <div class="card-body h-50">
                             <i class="bi bi-bookmark text-yellow"></i>
                             <a href="@item.Uri" target="_blank" class="card-title text-main text-md fw-bold link">
                                 @item.Title

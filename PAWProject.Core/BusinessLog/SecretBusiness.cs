@@ -1,7 +1,7 @@
 ﻿using PAWProject.Data.Repositories;
 using PAWProject.Models.Entities;
 
-namespace PAWProject.Core.NewFolder;
+namespace PAWProject.Core.Business;
     public interface ISecretBusiness
     {
         /// <summary>

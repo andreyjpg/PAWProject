@@ -1,11 +1,11 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace PAWProject.MVC.Models
+namespace PAWProject.DTOs.DTOs
 {
-  
-    public class Source
+    public class SourceDTO
     {
         public int Id { get; set; }
+
 
         [Required(ErrorMessage = "La URL es debe de ir si o si.")]
         [StringLength(500)]
@@ -24,9 +24,13 @@ namespace PAWProject.MVC.Models
         [Required(ErrorMessage = "El tipo de componente es obligatorio.")]
         [StringLength(100)]
         [Display(Name = "Tipo de componente")]
-        public string ComponentType { get; set; } = "feed"; 
+        public string ComponentType { get; set; } = "feed";
 
         [Display(Name = "Requiere secreto API key")]
         public bool RequiresSecret { get; set; }
+
+        public virtual ICollection<SecretDTO> Secrets { get; set; } = new List<SecretDTO>();
+
+        public virtual ICollection<SourceItemDTO> SourceItems { get; set; } = new List<SourceItemDTO>();
     }
 }
