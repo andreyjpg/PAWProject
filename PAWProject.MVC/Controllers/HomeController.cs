@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PAWProject.DTOs;
 using PAWProject.DTOs.DTOs;
@@ -58,6 +59,7 @@ namespace PAWProject.MVC.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveItem(int sourceId, FeedItemDTO item)
@@ -89,6 +91,7 @@ namespace PAWProject.MVC.Controllers
             return RedirectToAction(nameof(Index), new { sourceId });
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Saved(int? sourceId)
         {

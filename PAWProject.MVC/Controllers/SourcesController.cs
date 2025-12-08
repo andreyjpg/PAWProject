@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PAWProject.DTOs.DTOs;
 using PAWProject.MVC.Models;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace PAWProject.MVC.Controllers
 {
    
+    [Authorize(Roles = "Admin")]
     public class SourcesController : Controller
     {
         private readonly HttpClient _httpClient;
