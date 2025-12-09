@@ -1,33 +1,36 @@
 @model PAWProject.MVC.Models.LoginViewModel
 @{
-    ViewData["Title"] = "Iniciar sesión";
+    ViewData["Title"] = "Inicio de sesión";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <h2 class="mb-3">Iniciar sesión</h2>
-        <p class="text-muted">Ingresa tus credenciales para continuar.</p>
+<div class="row justify-content-center align-content-center">
+    <div class="col-md-5 border rounded-4 p-4 border-coral shadow-red">
+        <h2 class="mb-3 text-red">Iniciar sesión</h2>
 
         <form asp-action="Login" method="post">
             @Html.AntiForgeryToken()
             <input asp-for="ReturnUrl" type="hidden" />
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div asp-validation-summary="ModelOnly" class="text-warning mb-3"></div>
 
             <div class="mb-3">
-                <label asp-for="Username" class="form-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+                <label asp-for="Username" class="form-label text-red fw-bold"></label>
+                <input asp-for="Username" class="form-control border-coral input-custom" />
+                <span asp-validation-for="Username" class="text-warning"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="Password" class="form-label  text-red fw-bold"></label>
+                <input asp-for="Password" class="form-control border-coral input-custom" />
+                <span asp-validation-for="Password" class="text-warning"></span>
+            </div>
+            <div>
+                <span>No tienes cuenta?</span>
+                <a asp-action="Register" class="btn btn-link text-red register-button">Registrarme</a>
             </div>
 
-            <button type="submit" class="btn btn-primary">Entrar</button>
-            <a asp-action="Register" class="btn btn-link">Crear cuenta</a>
+
+            <button type="submit" class="relative btn btn-custom mt-2">Entrar</button>
         </form>
     </div>
 </div>

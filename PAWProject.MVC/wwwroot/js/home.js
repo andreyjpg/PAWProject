@@ -29,3 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+
+function recortar(texto, max = 200)
+{
+    if (string.IsNullOrWhiteSpace(texto)) return "";
+    return texto.Length <= max ? texto : texto.Substring(0, max) + "...";
+}
+

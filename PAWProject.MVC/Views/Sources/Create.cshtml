@@ -5,8 +5,8 @@
 }
 
 <div class="container mt-4">
-    <h3>Nueva fuente</h3>
-    <p class="text-muted">
+    <h3 class="fw-bold text-red">Nueva fuente</h3>
+    <p class="text-red-sec">
         Aquí el administrador puede registrar nuevas fuentes (RSS, APIs, HTML) que luego el sistema podrá consumir.
     </p>
 
@@ -14,42 +14,42 @@
         @Html.AntiForgeryToken()
 
         <div class="mb-3">
-            <label asp-for="NewSource.Name" class="form-label"></label>
-            <input asp-for="NewSource.Name" class="form-control" />
-            <span asp-validation-for="NewSource.Name" class="text-danger"></span>
+            <label asp-for="NewSource.Name" class="form-label text-red fw-bold"></label>
+            <input asp-for="NewSource.Name" class="form-control border-coral input-custom" />
+            <span asp-validation-for="NewSource.Name" class="text-warning"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="NewSource.Url" class="form-label"></label>
-            <input asp-for="NewSource.Url" class="form-control" placeholder="https://feeds.bbci.co.uk/news/rss.xml" />
-            <span asp-validation-for="NewSource.Url" class="text-danger"></span>
+            <label asp-for="NewSource.Url" class="form-label text-red fw-bold"></label>
+            <input asp-for="NewSource.Url" class="form-control border-coral input-custom" placeholder="https://feeds.bbci.co.uk/news/rss.xml" />
+            <span asp-validation-for="NewSource.Url" class="text-warning"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="NewSource.ComponentType" class="form-label"></label>
-            <select asp-for="NewSource.ComponentType" class="form-select">
-                <option value="feed">feed (RSS / Atom / XML)</option>
-                <option value="api">api (JSON)</option>
-                <option value="widget">widget / HTML</option>
+            <label asp-for="NewSource.ComponentType" class="form-label text-red fw-bold"></label>
+            <select asp-for="NewSource.ComponentType" class="form-select select-custom">
+                <option class="option-custom" value="feed">feed (RSS / Atom / XML)</option>
+                <option class="option-custom" value="api">api (JSON)</option>
+                <option class="option-custom" value="widget">widget / HTML</option>
             </select>
-            <span asp-validation-for="NewSource.ComponentType" class="text-danger"></span>
+            <span asp-validation-for="NewSource.ComponentType" class="text-warning"></span>
         </div>
 
         <div class="form-check mb-3">
-            <input asp-for="NewSource.RequiresSecret" class="form-check-input" />
-            <label asp-for="NewSource.RequiresSecret" class="form-check-label"></label>
+            <input asp-for="NewSource.RequiresSecret" class="form-check-input check-custom border-coral" />
+            <label asp-for="NewSource.RequiresSecret" class="form-check-label text-red fw-bold"></label>
         </div>
 
         <div class="mb-3">
-            <label asp-for="NewSource.Description" class="form-label"></label>
-            <textarea asp-for="NewSource.Description" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="NewSource.Description" class="text-danger"></span>
+            <label asp-for="NewSource.Description" class="form-label text-red fw-bold"></label>
+            <textarea asp-for="NewSource.Description" class="form-control border-coral input-custom" rows="3"></textarea>
+            <span asp-validation-for="NewSource.Description" class="text-warning"></span>
         </div>
 
-        <button type="submit" class="btn btn-success">
+        <button type="submit" class="btn btn-custom">
             <i class="bi bi-save"></i> Guardar
         </button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">Volver</a>
+        <a asp-action="Index" class="btn ms-2 link-custom">Volver</a>
     </form>
 </div>
 

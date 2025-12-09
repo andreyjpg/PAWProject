@@ -6,22 +6,22 @@
 }
 
 <div class="text-center ">
-    <h3 class="mb-4">Recent News</h3>
+    <h3 class="mb-4 fw-bold text-red">Recent News</h3>
 
     <div class="mb-4">
         <form asp-action="Index" method="get" class="row g-2 justify-content-center">
             <div class="col-auto">
-                <select name="sourceId" class="form-select">
+                <select name="sourceId" class="form-select select-custom">
                     @foreach (var s in Model.Sources)
                     {
-                        <option value="@s.Id" selected="@(Model.SelectedSourceId == s.Id)">
+                        <option class="option-custom" value="@s.Id" selected="@(Model.SelectedSourceId == s.Id)">
                             @s.Name
                         </option>
                     }
                 </select>
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">
+            <div class="col-auto mx-lg-2">
+                <button type="submit" class="btn btn-custom">
                     Cargar fuente
                 </button>
             </div>
@@ -38,8 +38,8 @@
         {
             foreach (var item in Model.FeedItems)
             {
-                <div class="col-md-3">
-                    <div class="card shadow-sm card-height mt-5">
+                <div class="col-md-3 mt-5">
+                    <div class="card card-height rounded-3 news-box">
                         <div class="position-relative">
                             @if (!string.IsNullOrEmpty(item.Image))
                             {
@@ -53,13 +53,17 @@
                         </div>
 
                         <div class="card-body h-50">
-                            <i class="bi bi-bookmark text-yellow"></i>
-                            <a href="@item.Uri" target="_blank" class="card-title text-main text-md fw-bold link">
+@*                             <i class="bi bi-bookmark text-yellow"></i>
+*@                          <a href="@item.Uri" target="_blank" class="card-title text-main text-md fw-bold link">
                                 @item.Title
                             </a>
                             <p class="card-subtitle text-sm mt-2">@item.Description</p>
+                            @* <p class="card-subtitle text-sm mt-2 description" data-full="@item.Description"></p>
+                            <a class="btn btn-outline-primary" asp-page="/News/Details" asp-route-id="@item.Id">
+                                Ver noticia completa
+                            </a> *@
 
-                            <form asp-action="SaveItem" method="post" class="mt-2">
+                            <form asp-action="SaveItem" method="post" class="position-absolute center-absolute">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="sourceId" value="@Model.SelectedSourceId" />
                                 <input type="hidden" name="item.Id" value="@item.Id" />
@@ -68,7 +72,7 @@
                                 <input type="hidden" name="item.Uri" value="@item.Uri" />
                                 <input type="hidden" name="item.Image" value="@item.Image" />
                                 <input type="hidden" name="item.PublishDate" value="@item.PublishDate" />
-                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                <button type="submit" class="btn btn-sm btn-custom">
                                     Guardar item
                                 </button>
                             </form>
@@ -87,5 +91,12 @@
         }
     </div>
 </div>
+
+@* <script>
+    document.querySelectorAll('.descripcion').forEach(el => {
+        const full = el.dataset.full;
+        el.innerText = recortarTexto(full, 250);
+    });
+</script> *@
 
 <script src="~/js/home.js" type="text/javascript"></script>
