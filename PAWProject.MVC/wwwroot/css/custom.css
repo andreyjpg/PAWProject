@@ -13,12 +13,28 @@
     background-color: var(--primary-red) !important;
 }
 
+.bg-coral {
+    background-color: var(--primary-coral) !important;
+}
+
 .bg-custom-white {
     background-color: var(--bg-white) !important;
 }
 
 .bg-gradient-black {
     background-image: linear-gradient(to top, black, transparent);
+}
+
+.border-primary {
+    border-color: var(--primary-red) !important;
+}
+
+.border-coral {
+    border-color: var(--primary-coral) !important;
+}
+
+.border-secondary {
+    border-color: var(--secondary-red) !important;
 }
 
 .text-xs {
@@ -39,6 +55,18 @@
 
 .text-xl {
     font-size: 1.5rem;
+}
+
+.text-red {
+    color: var(--primary-red);
+}
+
+.text-red-sec {
+    color: var(--secondary-red);
+}
+
+.text-coral {
+    color: var(--primary-coral);
 }
 
 .text-gray {
@@ -74,6 +102,94 @@
     transition: color 0.3s ease-in-out;
 }
 
-    .link:hover {
-        color: var(--primary-coral)
-    }
+.link:hover {
+    color: var(--primary-coral)
+}
+
+.register-button:hover {
+    color: var(--primary-coral)
+}
+
+.input-custom:focus {
+    outline: none;
+    box-shadow: var(--secondary-red) -5px 5px;
+}
+
+.btn-custom {
+    color: white;
+    background-color: var(--primary-red);
+}
+
+.btn-custom:hover {
+    background-color: var(--primary-red) !important;
+    color: white;
+    box-shadow: var(--primary-coral) -5px 5px;
+}
+
+.select-custom {
+    border-color: var(--primary-red)
+}
+
+.select-custom:focus {
+    outline: none;
+    outline-color: var(--secondary-red);
+    border-color: var(--secondary-red);
+}
+
+.select-custom:hover {
+    box-shadow: var(--primary-coral) -5px 5px;
+}
+
+.option-custom{
+    background-color: white;
+}
+
+.option-custom:hover {
+    background-color: var(--secondary-red);
+}
+
+.option-custom:focus {
+    background-color: var(--secondary-red);
+}
+
+.shadow-red {
+    box-shadow: var(--secondary-red) -5px 5px, var(--primary-coral) -10px 10px, var(--primary-red) -15px 15px, var(--primary-coral) -20px 20px, var(--primary-red) -25px 25px;
+}
+
+.news-box {
+    border: 1px solid var(--primary-red);
+    box-shadow: var(--primary-coral) -5px 5px;
+}
+
+.center-absolute {
+    right: 0;
+    left: 0;
+    bottom:12px;
+    margin:auto;
+}
+
+.row-custom {
+
+}
+
+.row-custom:hover {
+    background-color: var(--primary-coral);
+    color: white;
+}
+
+.link-custom {
+    color: var(--primary-red);
+}
+
+.link-custom:hover {
+    color: var(--secondary-red);
+}
+
+.check-custom:focus {
+    outline: none;
+    box-shadow: var(--primary-coral) -2px 2px;
+}
+
+.check-custom:checked {
+    background-color: var(--primary-red);
+}
