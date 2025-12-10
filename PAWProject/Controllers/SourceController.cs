@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PAWProject.Core.Business;
+using PAWProject.Core.BusinessLog;
 using PAWProject.DTOs.DTOs;
 using PAWProject.Models.Entities;
 using System.Text.Json;
