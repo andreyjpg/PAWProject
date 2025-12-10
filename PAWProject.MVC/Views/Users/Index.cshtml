@@ -1,0 +1,50 @@
+@model IEnumerable<PAWProject.MVC.Models.UserRoleViewModel>
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-red">Usuarios</h3>
+    </div>
+
+    @if (TempData["Message"] is string message)
+    {
+        <div class="alert alert-success">@message</div>
+    }
+
+    @if (!(Model?.Any() ?? false))
+    {
+        <div class="alert alert-info">
+            No hay usuarios registrados.
+        </div>
+    }
+    else
+    {
+        <table class="table bg-custom-white border-coral shadow-red">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre de usuario</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr class="row-custom">
+                        <td>@user.UserId</td>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td>@user.RoleName</td>
+                        <td>
+                            <a asp-action="EditRole" asp-route-id="@user.UserId" class="btn btn-sm btn-custom">Editar rol</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

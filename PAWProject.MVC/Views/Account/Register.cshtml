@@ -1,4 +1,4 @@
-@model PAWProject.MVC.Models.RegisterViewModel
+ï»¿@model PAWProject.MVC.Models.RegisterViewModel
 @{
     ViewData["Title"] = "Registro";
 }
@@ -25,21 +25,13 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="RoleId" class="form-label text-red fw-bold">Rol</label>
-                <select asp-for="RoleId" class="form-select  border-coral input-custom" asp-items="ViewBag.Roles">
-                    <option value="">Seleccione un rol</option>
-                </select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label text-red fw-bold">Contraseña</label>
+                <label asp-for="Password" class="form-label text-red fw-bold">Contrasena</label>
                 <input asp-for="Password" class="form-control border-coral input-custom" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label text-red fw-bold">Confirmar Contraseña</label>
+                <label asp-for="ConfirmPassword" class="form-label text-red fw-bold">Confirmar Contrasena</label>
                 <input asp-for="ConfirmPassword" class="form-control border-coral input-custom" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
