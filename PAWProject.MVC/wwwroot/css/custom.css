@@ -7,7 +7,8 @@
     --secondary-gray: #757575;
     --primary-yellow: #FFB300;
 
-    --primary-coral: #FF6F61 --primary-color: var(--primary-red);
+    --primary-coral: #FF6F61; 
+    --primary-color: var(--primary-red);
 }
 
 [data-theme="dark"] {
@@ -213,7 +214,7 @@ body {
 }
 
 .shadow-red {
-    box-shadow: var(--secondary-red) -5px 5px, var(--primary-coral) -10px 10px, var(--primary-red) -15px 15px, var(--primary-coral) -20px 20px, var(--primary-red) -25px 25px;
+    box-shadow: var(--secondary-red) -5px 5px, var(--primary-coral) -10px 10px, var(--primary-red) -15px 15px, var(--primary-coral) -20px 20px, var(--primary-red) -25px 25px !important;
 }
 
 .news-box {
