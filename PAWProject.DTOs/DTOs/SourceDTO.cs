@@ -7,22 +7,23 @@ namespace PAWProject.DTOs.DTOs
         public int Id { get; set; }
 
 
-        [Required(ErrorMessage = "La URL es debe de ir si o si.")]
-        [StringLength(500)]
+        [Required(ErrorMessage = "La URL debe de ir si o si.")]
+        [StringLength(500, ErrorMessage = "La URL supera la cantidad de caracteres permitidos.")]
         [Display(Name = "URL de la fuente")]
+        [Url(ErrorMessage = "Ingrese una URL válida (incluya http:// o https://).")]
         public string Url { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El nombre tiene que ir si o si.")]
-        [StringLength(200)]
+        [StringLength(200, ErrorMessage = "El nombre supera la cantidad de caracteres permitidos.")]
         [Display(Name = "Nombre")]
         public string Name { get; set; } = string.Empty;
 
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "La descripción supera la cantidad de caracteres permitidos.")]
         [Display(Name = "Descripcion")]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "El tipo de componente es obligatorio.")]
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "El tipo de componente supera la cantidad de caracteres permitidos.")]
         [Display(Name = "Tipo de componente")]
         public string ComponentType { get; set; } = "feed";
 
