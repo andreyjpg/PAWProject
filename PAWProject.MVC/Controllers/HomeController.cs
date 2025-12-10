@@ -6,8 +6,10 @@ using PAWProject.Models.Entities;
 using PAWProject.MVC.Models;
 using PAWProject.MVC.Services;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace PAWProject.MVC.Controllers
 {
@@ -95,14 +97,11 @@ namespace PAWProject.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Saved(int? sourceId)
         {
-            var SourceItemViewModel = new SourceItemViewModel();
-            var sources = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source");
+            var viewModel = new SourceItemViewModel();
+            var sources = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source")
+                ?? Enumerable.Empty<SourceDTO>();
 
-            ViewBag.Sources = sources;
-
-            var selectedSource = sourceId.HasValue
-                ? sources.FirstOrDefault(s => s.Id == sourceId.Value)
-                : sources.FirstOrDefault();
+            viewModel.Sources = sources;
 
             var response = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceItemDTO>>("api/SourceItem");
 
@@ -113,10 +112,13 @@ namespace PAWProject.MVC.Controllers
                     try
                     {
                         var dto = JsonSerializer.Deserialize<FeedItemDTO>(stored.Json);
-                        var source = sources.FirstOrDefault();
+                        var source = sources.FirstOrDefault(s => s.Id == stored.SourceId)
+                                     ?? stored.Source
+                                     ?? sources.FirstOrDefault();
+
                         if (dto != null && source != null)
                         {
-                            SourceItemViewModel.SourceItems.Add((source, dto, stored.CreatedAt));
+                            viewModel.SourceItems.Add((source, dto, stored.CreatedAt));
                         }
                     }
                     catch (Exception ex)
@@ -126,7 +128,7 @@ namespace PAWProject.MVC.Controllers
                 }
             }
 
-            return View(SourceItemViewModel);
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -149,6 +151,109 @@ namespace PAWProject.MVC.Controllers
             var fileName = $"noticias_export_{DateTime.UtcNow:yyyyMMdd_HHmm}.json";
 
             return File(bytes, "application/json", fileName);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportJson(IFormFile file, int? sourceId)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["Message"] = "Seleccione un archivo JSON ";
+                return RedirectToAction(nameof(Saved));
+            }
+
+            if (sourceId == null)
+            {
+                TempData["Message"] = "Seleccione una fuente.";
+                return RedirectToAction(nameof(Saved));
+            }
+
+            var sources = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceDTO>>("api/Source")
+                ?? Enumerable.Empty<SourceDTO>();
+            var selectedSource = sources.FirstOrDefault(s => s.Id == sourceId.Value);
+
+            if (selectedSource == null)
+            {
+                TempData["Message"] = "La fuente seleccionada no es valida.";
+                return RedirectToAction(nameof(Saved));
+            }
+
+            List<FeedItemDTO> items = new();
+            try
+            {
+                using var reader = new StreamReader(file.OpenReadStream());
+                var content = await reader.ReadToEndAsync();
+
+                using var doc = JsonDocument.Parse(content);
+                var root = doc.RootElement;
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                if (root.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var element in root.EnumerateArray())
+                    {
+                        var item = element.Deserialize<FeedItemDTO>(options);
+                        if (item != null)
+                        {
+                            items.Add(item);
+                        }
+                    }
+                }
+                else if (root.ValueKind == JsonValueKind.Object)
+                {
+                    var single = root.Deserialize<FeedItemDTO>(options);
+                    if (single != null)
+                    {
+                        items.Add(single);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al procesar el archivo JSON importado.");
+                TempData["Message"] = "El archivo JSON no tiene un formato válido.";
+                return RedirectToAction(nameof(Saved));
+            }
+
+            if (!items.Any())
+            {
+                TempData["Message"] = "No se encontraron items para importar.";
+                return RedirectToAction(nameof(Saved));
+            }
+
+            int success = 0;
+            foreach (var item in items)
+            {
+                try
+                {
+                    var json = JsonSerializer.Serialize(item);
+                    var sourceItem = new SourceItemDTO
+                    {
+                        SourceId = selectedSource.Id,
+                        Json = json,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    var payload = JsonSerializer.Serialize(sourceItem);
+                    var response = await _httpClientAPI.PostAsJsonAsync("api/SourceItem", payload);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        success++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al importar un item desde JSON.");
+                }
+            }
+
+            TempData["Message"] = success > 0
+                ? $"Se importaron {success} items correctamente."
+                : "No se pudieron importar items.";
+
+            return RedirectToAction(nameof(Saved));
         }
 
 

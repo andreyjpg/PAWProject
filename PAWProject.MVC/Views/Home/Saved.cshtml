@@ -2,15 +2,36 @@
 
 @{
     ViewData["Title"] = "Items guardados";
-    var sources = ViewBag.Sources;
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="fw-bold text-red">Items guardados</h3>
-        <button id="downloadJson" class="btn btn-custom">  <i class="bi bi-download"></i> Descargar JSON</button>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <button id="downloadJson" class="btn btn-custom"><i class="bi bi-download"></i> Descargar JSON</button>
+            <form asp-action="ImportJson" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                @Html.AntiForgeryToken()
+                <input type="file" name="file" accept=".json,application/json" class="form-control form-control-sm border-coral input-custom" />
+                <select name="sourceId" class="form-select form-select-sm border-coral input-custom">
+                    <option value="">Seleccione fuente</option>
+                    @if (Model.Sources != null)
+                    {
+                        foreach (var s in Model.Sources)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    }
+                </select>
+                <button type="submit" class="btn btn-custom btn-sm">Importar JSON</button>
+            </form>
+        </div>
 
     </div>
+
+    @if (TempData["Message"] is string msg)
+    {
+        <div class="alert alert-info">@msg</div>
+    }
 
    @*  <div class="mb-3">
         <form asp-action="Saved" method="get" class="row g-2 align-items-end">
