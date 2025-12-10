@@ -1,9 +1,8 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PAWProject.Data.MSSQL;
@@ -52,14 +51,14 @@ namespace PAWProject.MVC.Controllers
 
             if (user == null || !user.IsActive)
             {
-                ModelState.AddModelError(string.Empty, "Usuario o contraseña inválidos.");
+                ModelState.AddModelError(string.Empty, "Usuario o contrasena invalidos.");
                 return View(model);
             }
 
             var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
             if (verificationResult == PasswordVerificationResult.Failed)
             {
-                ModelState.AddModelError(string.Empty, "Usuario o contraseña inválidos.");
+                ModelState.AddModelError(string.Empty, "Usuario o contrasena invalidos.");
                 return View(model);
             }
 
@@ -83,7 +82,7 @@ namespace PAWProject.MVC.Controllers
                 ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
             };
 
-            // Limpiamos mensajes previos (ej. registro) para evitar que aparezcan tras iniciar sesión.
+            // Limpiamos mensajes previos (ej. registro) para evitar que aparezcan tras iniciar sesion.
             TempData.Remove("Message");
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
@@ -97,9 +96,8 @@ namespace PAWProject.MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Register()
+        public IActionResult Register()
         {
-            await LoadRolesAsync();
             return View(new RegisterViewModel());
         }
 
@@ -109,7 +107,6 @@ namespace PAWProject.MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await LoadRolesAsync();
                 return View(model);
             }
 
@@ -117,15 +114,13 @@ namespace PAWProject.MVC.Controllers
             if (existingUser)
             {
                 ModelState.AddModelError(nameof(model.Username), "El nombre de usuario ya existe.");
-                await LoadRolesAsync();
                 return View(model);
             }
 
-            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == model.RoleId);
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleName == "User");
             if (role == null)
             {
-                ModelState.AddModelError(nameof(model.RoleId), "Rol inválido.");
-                await LoadRolesAsync();
+                ModelState.AddModelError(string.Empty, "No se encontro el rol predeterminado de usuario.");
                 return View(model);
             }
 
@@ -135,7 +130,7 @@ namespace PAWProject.MVC.Controllers
                 Email = model.Email,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
-                RoleId = model.RoleId
+                RoleId = role.RoleId
             };
 
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, model.Password);
@@ -146,11 +141,11 @@ namespace PAWProject.MVC.Controllers
             _dbContext.UserRoles.Add(new UserRole
             {
                 UserId = newUser.UserId,
-                RoleId = model.RoleId
+                RoleId = role.RoleId
             });
             await _dbContext.SaveChangesAsync();
 
-            TempData["Message"] = "Usuario registrado correctamente. Ahora puede iniciar sesión.";
+            TempData["Message"] = "Usuario registrado correctamente. Ahora puede iniciar sesion.";
             return RedirectToAction(nameof(Login));
         }
 
@@ -167,12 +162,6 @@ namespace PAWProject.MVC.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-        }
-
-        private async Task LoadRolesAsync()
-        {
-            var roles = await _dbContext.Roles.AsNoTracking().ToListAsync();
-            ViewBag.Roles = new SelectList(roles, "RoleId", "RoleName");
         }
     }
 }
