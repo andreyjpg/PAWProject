@@ -8,7 +8,7 @@
 <div class="container mt-4">
     <h3 class="fw-bold text-red">Items guardados</h3>
 
-    <div class="mb-3">
+   @*  <div class="mb-3">
         <form asp-action="Saved" method="get" class="row g-2 align-items-end">
             <div class="col-auto">
                 <label class="form-label">Filtrar por fuente</label>
@@ -27,7 +27,7 @@
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
-    </div>
+    </div> *@
 
     @if (Model == null || !Model.SourceItems.Any())
     {
@@ -37,25 +37,25 @@
     }
     else
     {
-        <div class="row">
+        <div class="container-saveItems">
             @foreach (var ele in Model.SourceItems)
             {
                 var source = ele.Source;
                 var item = ele.Item;
-                <div class="col-md-4">
-                    <div class="card mb-3">
+                <div class="news-item">
+                    <div class="card mb-3 news-box">
                         <div class="card-header">
-                            <strong>@source.Name</strong>
-                            <span class="badge bg-secondary float-end">
+                            @* <strong class="text-red">@source.Name</strong> *@
+                            <span class="badge bg-secondary float-end bg-coral">
                                 Guardado: @ele.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                             </span>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">@item.Title</h5>
+                            <h5 class="card-title text-red">@item.Title</h5>
                             <p class="card-text">@item.Description</p>
                             @if (!string.IsNullOrEmpty(item.Uri))
                             {
-                                <a href="@item.Uri" class="btn btn-sm btn-outline-primary" target="_blank">Ver noticia</a>
+                                <a href="@item.Uri" class="btn btn-sm btn-custom" target="_blank">Ver noticia</a>
                             }
                         </div>
                     </div>
