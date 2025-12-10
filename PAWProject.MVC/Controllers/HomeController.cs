@@ -129,6 +129,29 @@ namespace PAWProject.MVC.Controllers
             return View(SourceItemViewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Download()
+        {
+            var response = await _httpClientAPI.GetFromJsonAsync<IEnumerable<SourceItemDTO>>("api/SourceItem");
+
+            if (response == null || !response.Any())
+                return BadRequest("No hay datos para exportar.");
+
+            var jsonObjects = response.Select(x => JsonSerializer.Deserialize<JsonElement>(x.Json)).ToList();
+
+            var outputJson = JsonSerializer.Serialize(jsonObjects, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(outputJson);
+
+            var fileName = $"noticias_export_{DateTime.UtcNow:yyyyMMdd_HHmm}.json";
+
+            return File(bytes, "application/json", fileName);
+        }
+
+
         public IActionResult Privacy()
         {
             return View();
