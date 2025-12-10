@@ -1,7 +1,7 @@
 ﻿using PAWProject.Data.Repositories;
 using PAWProject.Models.Entities;
 
-namespace PAWProject.Core.BusinessLog;
+namespace PAWProject.Core.Business;
 
     public interface ISourceItemBusiness
 {

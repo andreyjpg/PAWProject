@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PAWProject.Core.BusinessLog
+namespace PAWProject.Core.Business
 {
     public interface IIngestionBusiness
     {
