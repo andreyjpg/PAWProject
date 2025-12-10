@@ -55,6 +55,19 @@
                             </li>
                         }
                     </ul>
+                    <div class="d-flex align-items-center ms-4">
+                        <!-- Botón Dark / Light -->
+                        <button id="themeToggle" class="btn btn-sm btn-theme-toggle me-2" type="button" title="Cambiar tema">
+                            <i class="bi bi-moon-fill" id="themeToggleIcon"></i>
+                        </button>
+
+                        <div class="d-flex align-items-center">
+                            <span class="me-1 small color-label">Color:</span>
+                            <span class="theme-color-dot" data-color="#D32F2F" style="background-color:#D32F2F;"></span>   @* primary-red *@
+                            <span class="theme-color-dot" data-color="#FF6F61" style="background-color:#FF6F61;"></span>   @* primary-coral *@
+                            <span class="theme-color-dot" data-color="#FFB300" style="background-color:#FFB300;"></span>   @* primary-yellow *@
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -75,6 +88,7 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

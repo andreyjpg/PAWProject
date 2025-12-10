@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PAWProject.Core.Business;
+using PAWProject.Core.BusinessLog;
 using PAWProject.Data.MSSQL;
 using PAWProject.Data.Repositories;
 
